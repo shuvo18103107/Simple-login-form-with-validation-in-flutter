@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 
 void main() {
   runApp(MyApp());
@@ -335,12 +336,26 @@ class InputwithIcon extends StatefulWidget {
 
 class _InputwithIconState extends State<InputwithIcon> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
+
+  String _validatepass(value) {
+    if (value.isEmpty) {
+      return 'Required';
+    } else if (value.length < 6) {
+      return 'Should Be At Least 6 Characters';
+    } else if (value.length > 15) {
+      return 'Should Not Be More Than 15 Characters';
+    } else {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
         children: [
           Form(
+            autovalidateMode: AutovalidateMode.always,
             child: Column(
               children: [
                 TextFormField(
@@ -349,6 +364,10 @@ class _InputwithIconState extends State<InputwithIcon> {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(35))),
                       hintText: 'Enter Email'),
+                  validator: MultiValidator([
+                    RequiredValidator(errorText: 'Required *'),
+                    EmailValidator(errorText: 'Not A Valid Email'),
+                  ]),
                 ),
                 SizedBox(
                   height: 20,
@@ -359,6 +378,11 @@ class _InputwithIconState extends State<InputwithIcon> {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(28))),
                       hintText: 'Password'),
+                  // autofocus: false,
+                  obscureText: true,
+                  // validator: MinLengthValidator(6,
+                  //     errorText: 'should be atleast 6 characters'),
+                  validator: _validatepass,
                 ),
               ],
             ),
